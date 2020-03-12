@@ -59,7 +59,7 @@ spec:
         - name: registry-secret
       containers:
         - name: ncovis-api
-          image: ${IMAGE_FULL_NAME}
+          image: __IMAGE_FULL_NAME__
           imagePullPolicy: Always
           env:
           - name: APP_SENTRYDSN

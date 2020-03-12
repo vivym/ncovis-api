@@ -16,7 +16,7 @@ BUILD_PARAMS = -a -ldflags "${LDFLAGS}" -o build/ncovis-server cmd/ncovis-server
 REGISTRY_URL = registry.cn-beijing.aliyuncs.com/viv/
 IMAGE_NAME = ncovis-api
 IMAGE_VER = ${VERSION}-${COMMIT_HASH}
-export IMAGE_FULL_NAME = ${REGISTRY_URL}${IMAGE_NAME}:${IMAGE_VER}
+IMAGE_FULL_NAME = ${REGISTRY_URL}${IMAGE_NAME}:${IMAGE_VER}
 
 .PHONY: all
 all: build
@@ -34,3 +34,4 @@ release: clean
 	docker build -t ${IMAGE_NAME}:${IMAGE_VER} ./build
 	docker tag ${IMAGE_NAME}:${IMAGE_VER} ${IMAGE_FULL_NAME}
 	docker push ${IMAGE_FULL_NAME}
+	sed 's/__IMAGE_FULL_NAME__/${IMAGE_FULL_NAME}/g' deployment.yaml > build/deployment.yaml

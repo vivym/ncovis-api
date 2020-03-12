@@ -11,8 +11,14 @@ func New() *gin.Engine {
 
 	r.Use(cors.Default())
 
-	r.POST("graphql", graphql.GraphqlHandler())
-	r.GET("graphql", graphql.GraphqlHandler())
+	r.GET("/healthz", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "healthy",
+		})
+	})
+
+	r.POST("/graphql", graphql.GraphqlHandler())
+	r.GET("/graphql", graphql.GraphqlHandler())
 
 	return r
 }
