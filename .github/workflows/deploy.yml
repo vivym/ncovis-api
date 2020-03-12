@@ -30,7 +30,7 @@ jobs:
       run: make release
     
     - name: SCP k8s deployment.yaml
-      uses: appleboy/scp-action@v0.0.1
+      uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
         port: ${{ secrets.SSH_PORT }}

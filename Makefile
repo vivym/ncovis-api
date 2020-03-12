@@ -36,32 +36,32 @@ release: clean
 
 	@echo
 	@echo ---------------------------------------------------------------
-	@echo -        building $(shell date "$(DATE_FMT)")
+	@echo - `date "+%H:%M:%S"` [1] building binary
 	@echo ---------------------------------------------------------------
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build ${BUILD_PARAMS}
 
 	@echo
 	@echo ---------------------------------------------------------------
-	@echo -        building docker image $(shell date "$(DATE_FMT)")
+	@echo - `date "+%H:%M:%S"` [2] building docker image
 	@echo ---------------------------------------------------------------
 	@docker build -t ${IMAGE_NAME}:${IMAGE_VER} -f ./Dockerfile ./build
 	@docker tag ${IMAGE_NAME}:${IMAGE_VER} ${IMAGE_FULL_NAME}
 
 	@echo
 	@echo ---------------------------------------------------------------
-	@echo -        pushing docker image $(shell date "$(DATE_FMT)")
+	@echo - `date "+%H:%M:%S"` [3] pushing docker image
 	@echo ---------------------------------------------------------------
-	#@docker push ${IMAGE_FULL_NAME}
+	@docker push ${IMAGE_FULL_NAME}
 
 	@echo
 	@echo ---------------------------------------------------------------
-	@echo -        create k8s deployment.yaml $(shell date "$(DATE_FMT)")
+	@echo - `date "+%H:%M:%S"` [4] create k8s deployment.yaml
 	@echo ---------------------------------------------------------------
 	@sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g' deployment.yaml > build/deployment.yaml
 
 	@echo
 	@echo ---------------------------------------------------------------
-	@echo -        done $(shell date "$(DATE_FMT)")
+	@echo - `date "+%H:%M:%S"` [5] done
 	@echo ---------------------------------------------------------------
 
 .PHONY: docker-login
