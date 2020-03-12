@@ -13,7 +13,7 @@ LDFLAGS += -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.
 
 BUILD_PARAMS = -a -ldflags "${LDFLAGS}" -o build/ncovis-server cmd/ncovis-server/*.go
 
-REGISTRY_URL = registry.cn-beijing.aliyuncs.com/viv/
+REGISTRY_URL = registry.cn-beijing.aliyuncs.com/public-api/
 IMAGE_NAME = ncovis-api
 IMAGE_VER = ${VERSION}-${COMMIT_HASH}
 IMAGE_FULL_NAME = ${REGISTRY_URL}${IMAGE_NAME}:${IMAGE_VER}
