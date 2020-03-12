@@ -1,0 +1,9 @@
+### Project ###
+/build/*
+!/build/Dockerfile
+
+### PyCharm ###
+.idea
+
+### macOS ###
+.DS_Store
