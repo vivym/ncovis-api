@@ -51,4 +51,4 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script_stop: true
         script: |
-          kubectl apply -f public-api/ncovis-api/deployment.yaml
+          /snap/bin/microk8s.kubectl apply -f public-api/ncovis-api/deployment.yaml

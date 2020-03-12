@@ -21,7 +21,7 @@ func New(graphiQLToken string) *gin.Engine {
 	r.GET("/graphql", func(c *gin.Context) {
 		token := c.Query("token")
 		if token != graphiQLToken {
-			c.String(403, "permission diend!")
+			c.String(403, "Permission Diend.")
 			c.Abort()
 			return
 		}
