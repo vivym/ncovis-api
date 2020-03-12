@@ -47,5 +47,5 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
         script_stop: |
-           echo "Hello Github Actions1" >> hello.txt
-           echo "Hello Github Actions2" >> hello.txt
+          echo "Hello Github Actions1" >> hello.txt
+          echo "Hello Github Actions2" >> hello.txt
