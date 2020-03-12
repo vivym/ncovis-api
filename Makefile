@@ -23,22 +23,49 @@ all: build
 
 .PHONY: clean
 clean:
-	rm -r -f build
+	@rm -r -f build
 
 .PHONY: build
 build: clean
-	mkdir build
+	@mkdir build
 	go build ${BUILD_PARAMS}
 
 .PHONY: release
 release: clean
-	mkdir build
+	@mkdir build
+
+	@echo
+	@echo ---------------------------------------------------------------
+	@echo -        building $(shell date "$(DATE_FMT)")
+	@echo ---------------------------------------------------------------
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build ${BUILD_PARAMS}
-	docker build -t ${IMAGE_NAME}:${IMAGE_VER} -f ./Dockerfile ./build
-	docker tag ${IMAGE_NAME}:${IMAGE_VER} ${IMAGE_FULL_NAME}
-	docker push ${IMAGE_FULL_NAME}
-	sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g' deployment.yaml > build/deployment.yaml
+
+	@echo
+	@echo ---------------------------------------------------------------
+	@echo -        building docker image $(shell date "$(DATE_FMT)")
+	@echo ---------------------------------------------------------------
+	@docker build -t ${IMAGE_NAME}:${IMAGE_VER} -f ./Dockerfile ./build
+	@docker tag ${IMAGE_NAME}:${IMAGE_VER} ${IMAGE_FULL_NAME}
+
+	@echo
+	@echo ---------------------------------------------------------------
+	@echo -        pushing docker image $(shell date "$(DATE_FMT)")
+	@echo ---------------------------------------------------------------
+	#@docker push ${IMAGE_FULL_NAME}
+
+	@echo
+	@echo ---------------------------------------------------------------
+	@echo -        create k8s deployment.yaml $(shell date "$(DATE_FMT)")
+	@echo ---------------------------------------------------------------
+	@sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g' deployment.yaml > build/deployment.yaml
+
+	@echo
+	@echo ---------------------------------------------------------------
+	@echo -        done $(shell date "$(DATE_FMT)")
+	@echo ---------------------------------------------------------------
 
 .PHONY: docker-login
 docker-login:
-	docker login --username=${REGISTRY_USERNAME} --password=${REGISTRY_PASSWORD} ${REGISTRY_URL}
+	@echo building $(shell date "$(DATE_FMT)")
+	@docker login --username=${REGISTRY_USERNAME} --password=${REGISTRY_PASSWORD} ${REGISTRY_URL}
+	@echo done $(shell date "$(DATE_FMT)")
