@@ -1,0 +1,51 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Docker login
+      env:
+        REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+        REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      run: make docker-login
+
+    - name: Build and push docker image 
+      run: make release
+    
+    - name: SCP k8s deployment.yaml
+      uses: appleboy/scp-action@v0.0.1
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        source: build/deployment.yaml
+        target: ncovis-api-deployment.yaml
+    
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script_stop: |
+           echo "Hello Github Actions1" >> hello.txt
+           echo "Hello Github Actions2" >> hello.txt
