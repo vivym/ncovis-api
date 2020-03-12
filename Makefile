@@ -23,16 +23,22 @@ all: build
 
 .PHONY: clean
 clean:
-	rm -r -f `ls build/* | grep -v Dockerfile`
+	rm -r -f build
 
 .PHONY: build
-build: build
+build: clean
+	mkdir build
 	go build ${BUILD_PARAMS}
 
 .PHONY: release
 release: clean
+	mkdir build
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build ${BUILD_PARAMS}
-	docker build -t ${IMAGE_NAME}:${IMAGE_VER} ./build
+	docker build -t ${IMAGE_NAME}:${IMAGE_VER} -f ./Dockerfile ./build
 	docker tag ${IMAGE_NAME}:${IMAGE_VER} ${IMAGE_FULL_NAME}
 	docker push ${IMAGE_FULL_NAME}
 	sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g' deployment.yaml > build/deployment.yaml
+
+.PHONY: docker-login
+docker-login:
+	docker login --username=${REGISTRY_USERNAME} --password=${REGISTRY_PASSWORD} ${REGISTRY_URL}
