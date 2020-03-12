@@ -49,6 +49,4 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script_stop: true
         script: |
-          echo "Hello Github Actions1" >> hello.txt
-          echo "Hello Github Actions2" >> hello.txt
-          echo "Hello Github Actions3" >> hello.txt
+          /snap/bin/microk8s.kubectl apply -f public-api/ncovis-api/deployment.yaml

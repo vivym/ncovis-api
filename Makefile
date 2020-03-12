@@ -57,7 +57,7 @@ release: clean
 	@echo ---------------------------------------------------------------
 	@echo - `date "+%H:%M:%S"` [4] create k8s deployment.yaml
 	@echo ---------------------------------------------------------------
-	@sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g' deployment.yaml > build/deployment.yaml
+	@sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g;s#__GRAPHIQL_TOKEN__#${GRAPHIQL_TOKEN}#g' deployment.yaml > build/deployment.yaml
 
 	@echo
 	@echo ---------------------------------------------------------------

@@ -17,6 +17,8 @@ type configuration struct {
 		DBName string
 		URI    string
 	}
+
+	GraphiQLToken string
 }
 
 // configure configures some defaults in the Viper instance.
@@ -38,4 +40,5 @@ func configure(v *viper.Viper, p *pflag.FlagSet) {
 	v.SetDefault("port", 12711)
 	v.SetDefault("db.dbname", "ncovis")
 	v.SetDefault("db.uri", "mongodb://localhost:27017/")
+	v.SetDefault("GraphiQLToken", "")
 }

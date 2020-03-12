@@ -70,7 +70,7 @@ func main() {
 		log.Fatalf("mongodb error: %s", err)
 	}
 
-	r := route.New()
+	r := route.New(config.GraphiQLToken)
 	if err := r.Run("0.0.0.0:" + strconv.Itoa(config.Port)); err != nil {
 		log.Fatalf("http error: %s", err)
 	}

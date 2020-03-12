@@ -70,6 +70,8 @@ spec:
             value: ncovis
           - name: APP_DB_URI
             value: mongodb://mongodb:27017/
+          - name: APP_GRAPHIQLTOKEN
+            value: __GRAPHIQL_TOKEN__
           ports:
             - containerPort: 12711
               protocol: TCP
