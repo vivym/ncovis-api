@@ -65,7 +65,7 @@ spec:
           - name: APP_SENTRYDSN
             value: https://da71503fc8de4f41909fe1a3539ae53f@sentry.io/3831823
           - name: APP_PORT
-            value: 12711
+            value: "12711"
           - name: APP_DB_DBNAME
             value: ncovis
           - name: APP_DB_URI

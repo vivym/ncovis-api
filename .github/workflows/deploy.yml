@@ -26,7 +26,9 @@ jobs:
         REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
       run: make docker-login
 
-    - name: Build and push docker image 
+    - name: Build and push docker image
+      env:
+        GRAPHIQL_TOKEN: ${{ secrets.GRAPHIQL_TOKEN }}
       run: make release
     
     - name: SCP k8s deployment.yaml
@@ -49,4 +51,4 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script_stop: true
         script: |
-          /snap/bin/microk8s.kubectl apply -f public-api/ncovis-api/deployment.yaml
+          kubectl apply -f public-api/ncovis-api/deployment.yaml
