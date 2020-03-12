@@ -23,15 +23,16 @@ all: build
 
 .PHONY: clean
 clean:
-	rm -f build/ncovis-server
-
-build: clean
-	go build ${BUILD_PARAMS}
+	rm -r -f `ls build/* | grep -v Dockerfile`
 
 .PHONY: build
+build: build
+	go build ${BUILD_PARAMS}
+
+.PHONY: release
 release: clean
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build ${BUILD_PARAMS}
 	docker build -t ${IMAGE_NAME}:${IMAGE_VER} ./build
 	docker tag ${IMAGE_NAME}:${IMAGE_VER} ${IMAGE_FULL_NAME}
 	docker push ${IMAGE_FULL_NAME}
-	sed 's/__IMAGE_FULL_NAME__/${IMAGE_FULL_NAME}/g' deployment.yaml > build/deployment.yaml
+	sed 's#__IMAGE_FULL_NAME__#${IMAGE_FULL_NAME}#g' deployment.yaml > build/deployment.yaml
