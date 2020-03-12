@@ -1,0 +1,84 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: public-api
+  name: ncovis-api
+  annotations:
+    kubernetes.io/ingres.class: nginx
+spec:
+  rules:
+    - host: api.ncovis.mllab.cn
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: ncovis-api
+              servicePort: 12711
+  tls:
+    - hosts:
+        - api.ncovis.mllab.cn
+      secretName: api.ncovis.mllab.cn
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: public-api
+  name: ncovis-api
+  labels:
+    app: ncovis-api
+spec:
+  selector:
+    app: ncovis-api
+  ports:
+    - port: 12711
+      targetPort: 12711
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: public-api
+  name: ncovis-api
+  labels:
+    app: ncovis-api
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ncovis-api
+  template:
+    metadata:
+      labels:
+        app: ncovis-api
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      containers:
+        - name: ncovis-api
+          image: ${IMAGE_FULL_NAME}
+          imagePullPolicy: Always
+          env:
+          - name: APP_SENTRYDSN
+            value: https://da71503fc8de4f41909fe1a3539ae53f@sentry.io/3831823
+          - name: APP_PORT
+            value: 12711
+          - name: APP_DB_DBNAME
+            value: ncovis
+          - name: APP_DB_URI
+            value: mongodb://mongodb:27017/
+          ports:
+            - containerPort: 12711
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 12711
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
