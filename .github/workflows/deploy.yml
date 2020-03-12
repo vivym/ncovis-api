@@ -49,3 +49,4 @@ jobs:
         script_stop: |
           echo "Hello Github Actions1" >> hello.txt
           echo "Hello Github Actions2" >> hello.txt
+          echo "Hello Github Actions3" >> hello.txt
