@@ -9,6 +9,7 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 		"ncov":  &ncovQuery,
 		"news":  &newsQuery,
 		"zhihu": &zhihuQuery,
+		"weibo": &weiboQuery,
 	},
 })
 

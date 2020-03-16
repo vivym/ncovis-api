@@ -56,7 +56,9 @@ func (*ZhihuHotTopics) Query(time, from int32, limit int64) (*zhihuQueryResult, 
 	}
 
 	findOptions := options.Find()
-	findOptions.SetLimit(limit)
+	if limit != 0 {
+		findOptions.SetLimit(limit)
+	}
 	findOptions.SetSort(bson.M{"time": 1})
 
 	data := []*ZhihuHotTopics{}

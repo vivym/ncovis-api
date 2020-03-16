@@ -8,36 +8,17 @@ import (
 	"github.com/vivym/ncovis-api/internal/model"
 )
 
-var keywordType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Keyword",
-	Description: "Keyword",
-	Fields: graphql.Fields{
-		"name": &graphql.Field{
-			Type: graphql.String,
-		},
-		"weight": &graphql.Field{
-			Type: graphql.Float,
-		},
-		"pos": &graphql.Field{
-			Type: graphql.String,
-		},
-	},
-})
-
-var zhihuTopicType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "ZhihuTopic",
-	Description: "Zhihu Topic",
+var weiboTopicType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "WeiboTopic",
+	Description: "Weibo Topic",
 	Fields: graphql.Fields{
 		"heat": &graphql.Field{
-			Type: graphql.Int,
-		},
-		"qid": &graphql.Field{
 			Type: graphql.Int,
 		},
 		"title": &graphql.Field{
 			Type: graphql.String,
 		},
-		"excerpt": &graphql.Field{
+		"url": &graphql.Field{
 			Type: graphql.String,
 		},
 		"keywords": &graphql.Field{
@@ -46,13 +27,10 @@ var zhihuTopicType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
-var zhihuHotTopicsType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "ZhihuHotTopics",
-	Description: "Zhihu Hot Topics",
+var weiboHotTopicsType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "WeiboHotTopics",
+	Description: "Weibo Hot Topics",
 	Fields: graphql.Fields{
-		"since": &graphql.Field{
-			Type: graphql.Int,
-		},
 		"time": &graphql.Field{
 			Type: graphql.Int,
 		},
@@ -60,20 +38,20 @@ var zhihuHotTopicsType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.NewList(keywordType),
 		},
 		"topics": &graphql.Field{
-			Type: graphql.NewList(zhihuTopicType),
+			Type: graphql.NewList(weiboTopicType),
 		},
 	},
 })
 
-var zhihuQuery = graphql.Field{
-	Name:        "ZhihuQuery",
-	Description: "Zhihu Query",
+var weiboQuery = graphql.Field{
+	Name:        "WeiboQuery",
+	Description: "Weibo Query",
 	Type: graphql.NewObject(graphql.ObjectConfig{
-		Name:        "ZhihuQueryType",
-		Description: "Zhihu Query Type",
+		Name:        "WeiboQueryType",
+		Description: "Weibo Query Type",
 		Fields: graphql.Fields{
 			"data": &graphql.Field{
-				Type: graphql.NewList(zhihuHotTopicsType),
+				Type: graphql.NewList(weiboHotTopicsType),
 			},
 			"paging": &graphql.Field{
 				Type: pagingType,
@@ -108,6 +86,6 @@ var zhihuQuery = graphql.Field{
 		}
 		from, _ := strconv.ParseInt(string(cursorByte), 16, 64)
 
-		return (&model.ZhihuHotTopics{}).Query(int32(time), int32(from), int64(limit))
+		return (&model.WeiboHotTopics{}).Query(int32(time), int32(from), int64(limit))
 	},
 }
