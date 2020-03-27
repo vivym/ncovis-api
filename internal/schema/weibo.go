@@ -62,6 +62,9 @@ var weiboQuery = graphql.Field{
 		"time": &graphql.ArgumentConfig{
 			Type: graphql.Int,
 		},
+		"from": &graphql.ArgumentConfig{
+			Type: graphql.Int,
+		},
 		"cursor": &graphql.ArgumentConfig{
 			Type: graphql.String,
 		},
@@ -71,6 +74,7 @@ var weiboQuery = graphql.Field{
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		time, _ := p.Args["time"].(int)
+		from, _ := p.Args["from"].(int)
 		cursor, _ := p.Args["cursor"].(string)
 		limit, _ := p.Args["limit"].(int)
 
@@ -84,7 +88,10 @@ var weiboQuery = graphql.Field{
 		if err != nil {
 			return nil, err
 		}
-		from, _ := strconv.ParseInt(string(cursorByte), 16, 64)
+		cursorInt, _ := strconv.ParseInt(string(cursorByte), 16, 64)
+		if cursorInt != 0 {
+			from = int(cursorInt)
+		}
 
 		return (&model.WeiboHotTopics{}).Query(int32(time), int32(from), int64(limit))
 	},
