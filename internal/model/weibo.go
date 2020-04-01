@@ -66,6 +66,13 @@ func (*WeiboHotTopics) Query(time, from int32, limit int64) (*weiboQueryResult, 
 	}
 	nextCursor := base64.StdEncoding.EncodeToString([]byte(lastDate))
 
+	for _, topics := range data {
+		topics.Keywords = topics.Keywords[:40]
+		for _, topic := range topics.Topics {
+			topic.Keywords = topic.Keywords[:40]
+		}
+	}
+
 	result := weiboQueryResult{
 		Data: data,
 		Paging: Paging{
