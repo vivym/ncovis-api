@@ -71,12 +71,20 @@ var weiboQuery = graphql.Field{
 		"limit": &graphql.ArgumentConfig{
 			Type: graphql.Int,
 		},
+		"numWords": &graphql.ArgumentConfig{
+			Type: graphql.Int,
+		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		time, _ := p.Args["time"].(int)
 		from, _ := p.Args["from"].(int)
 		cursor, _ := p.Args["cursor"].(string)
 		limit, _ := p.Args["limit"].(int)
+		numWords, _ := p.Args["numWords"].(int)
+
+		if numWords <= 0 || numWords > 40 {
+			numWords = 40
+		}
 
 		/*
 			if limit == 0 || limit > 10 {
@@ -93,6 +101,6 @@ var weiboQuery = graphql.Field{
 			from = int(cursorInt)
 		}
 
-		return (&model.WeiboHotTopics{}).Query(int32(time), int32(from), int64(limit))
+		return (&model.WeiboHotTopics{}).Query(int32(time), int32(from), int64(limit), numWords)
 	},
 }

@@ -32,7 +32,7 @@ type weiboQueryResult struct {
 	Paging Paging            `json:"paging"`
 }
 
-func (*WeiboHotTopics) Query(time, from int32, limit int64) (*weiboQueryResult, error) {
+func (*WeiboHotTopics) Query(time, from int32, limit int64, numWords int) (*weiboQueryResult, error) {
 	filter := bson.M{}
 	if time != 0 {
 		filter["time"] = time
@@ -68,14 +68,14 @@ func (*WeiboHotTopics) Query(time, from int32, limit int64) (*weiboQueryResult, 
 
 	for _, topics := range data {
 		count := len(topics.Keywords)
-		if count > 40 {
-			count = 40
+		if count > numWords {
+			count = numWords
 		}
 		topics.Keywords = topics.Keywords[:count]
 		for _, topic := range topics.Topics {
 			count := len(topic.Keywords)
-			if count > 40 {
-				count = 40
+			if count > numWords {
+				count = numWords
 			}
 			topic.Keywords = topic.Keywords[:count]
 		}

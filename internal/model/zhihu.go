@@ -38,7 +38,7 @@ type zhihuQueryResult struct {
 	Paging Paging            `json:"paging"`
 }
 
-func (*ZhihuHotTopics) Query(time, from int32, limit int64) (*zhihuQueryResult, error) {
+func (*ZhihuHotTopics) Query(time, from int32, limit int64, numWords int) (*zhihuQueryResult, error) {
 	filter := bson.M{}
 	if time != 0 {
 		filter["time"] = time
@@ -74,14 +74,14 @@ func (*ZhihuHotTopics) Query(time, from int32, limit int64) (*zhihuQueryResult, 
 
 	for _, topics := range data {
 		count := len(topics.Keywords)
-		if count > 40 {
-			count = 40
+		if count > numWords {
+			count = numWords
 		}
 		topics.Keywords = topics.Keywords[:count]
 		for _, topic := range topics.Topics {
 			count := len(topic.Keywords)
-			if count > 40 {
-				count = 40
+			if count > numWords {
+				count = numWords
 			}
 			topic.Keywords = topic.Keywords[:count]
 		}
