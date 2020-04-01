@@ -73,9 +73,17 @@ func (*ZhihuHotTopics) Query(time, from int32, limit int64) (*zhihuQueryResult, 
 	nextCursor := base64.StdEncoding.EncodeToString([]byte(lastDate))
 
 	for _, topics := range data {
-		topics.Keywords = topics.Keywords[:40]
+		count := len(topics.Keywords)
+		if count > 40 {
+			count = 40
+		}
+		topics.Keywords = topics.Keywords[:count]
 		for _, topic := range topics.Topics {
-			topic.Keywords = topic.Keywords[:40]
+			count := len(topic.Keywords)
+			if count > 40 {
+				count = 40
+			}
+			topic.Keywords = topic.Keywords[:count]
 		}
 	}
 
