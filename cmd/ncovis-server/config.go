@@ -19,6 +19,7 @@ type configuration struct {
 	}
 
 	GraphiQLToken string
+	AdminToken    string
 }
 
 // configure configures some defaults in the Viper instance.
@@ -41,4 +42,5 @@ func configure(v *viper.Viper, p *pflag.FlagSet) {
 	v.SetDefault("db.dbname", "ncovis")
 	v.SetDefault("db.uri", "mongodb://localhost:27017/")
 	v.SetDefault("GraphiQLToken", "")
+	v.SetDefault("AdminToken", "")
 }

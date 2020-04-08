@@ -29,6 +29,7 @@ jobs:
     - name: Build and push docker image
       env:
         GRAPHIQL_TOKEN: ${{ secrets.GRAPHIQL_TOKEN }}
+        ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
       run: make release
     
     - name: SCP k8s deployment.yaml

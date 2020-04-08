@@ -6,7 +6,7 @@ import (
 	"github.com/vivym/ncovis-api/internal/controller/graphql"
 )
 
-func New(graphiQLToken string) *gin.Engine {
+func New(graphiQLToken string, adminToken string) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.Default())
@@ -17,7 +17,7 @@ func New(graphiQLToken string) *gin.Engine {
 		})
 	})
 
-	r.POST("/graphql", graphql.GraphqlHandler())
+	r.POST("/graphql", graphql.GraphqlHandler(adminToken))
 	r.GET("/graphql", func(c *gin.Context) {
 		token := c.Query("token")
 		if token != graphiQLToken {
@@ -26,7 +26,7 @@ func New(graphiQLToken string) *gin.Engine {
 			return
 		}
 		c.Next()
-	}, graphql.GraphqlHandler())
+	}, graphql.GraphqlHandler(adminToken))
 
 	return r
 }
