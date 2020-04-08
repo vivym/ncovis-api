@@ -73,6 +73,37 @@ var ncovType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+var ncovOverallType = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "nCoVGlobalInfo",
+	Description: "nCoV Global info",
+	Fields: graphql.Fields{
+		"dead": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"deadIncr": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"confirmed": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"confirmedIncr": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"cured": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"curedIncr": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"remainingConfirmed": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"remainingConfirmedIncr": &graphql.Field{
+			Type: graphql.Int,
+		},
+	},
+})
+
 var ncovQuery = graphql.Field{
 	Name:        "NCoVQuery",
 	Description: "nCoV Info Query",
@@ -98,5 +129,61 @@ var ncovQuery = graphql.Field{
 		}
 
 		return (&model.NCoVInfo{}).Query(country, region, date)
+	},
+}
+
+var ncovOverallQuery = graphql.Field{
+	Name:        "NCoVOverallQuery",
+	Description: "nCoV Overall Info Query",
+	Type: graphql.NewObject(graphql.ObjectConfig{
+		Name:        "nCoVOverall",
+		Description: "nCoV overall info",
+		Fields: graphql.Fields{
+			"time": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"dead": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"deadIncr": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"confirmed": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"confirmedIncr": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"suspected": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"suspectedIncr": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"cured": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"curedIncr": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"remainingConfirmed": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"remainingConfirmedIncr": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"serious": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"seriousIncr": &graphql.Field{
+				Type: graphql.Int,
+			},
+			"global": &graphql.Field{
+				Type: ncovOverallType,
+			},
+		},
+	}),
+	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		return (&model.NCovOverallInfo{}).Query()
 	},
 }
