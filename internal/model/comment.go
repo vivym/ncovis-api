@@ -23,6 +23,7 @@ type Comment struct {
 	IsPublished      bool      `json:"isPublished" bson:"isPublished"`
 	IsTop            bool      `json:"isTop" bson:"isTop"`
 	IsDeleted        bool      `json:"isDeleted" bson:"isDeleted"`
+	IsMine           bool      `json:"isMine" bson:",omitempty"`
 	ViewCount        int32     `json:"viewCount" bson:"viewCount"`
 	Keywords         []Keyword `json:"keywords" bson:"keywords"`
 }
@@ -32,21 +33,36 @@ type commentQueryResult struct {
 	Paging Paging     `json:"paging"`
 }
 
-func (c *Comment) prepareStrID() {
+func (c *Comment) prepareExtraFields(deviceID string) {
 	id, _ := c.GetID().(primitive.ObjectID)
 	c.ID = id.Hex()
+	c.IsMine = deviceID == c.DeviceID
 }
 
 type Success struct {
 	Code int `json:"code"`
 }
 
-func (*Comment) Query(sortBy string, offset, limit int, isAdmin bool) (*commentQueryResult, error) {
+func (*Comment) Query(sortBy string, offset, limit int, isAdmin bool, deviceID string) (*commentQueryResult, error) {
+	extraComments := []*Comment{}
+	if offset == 0 {
+		filter := bson.M{
+			"isDeleted":   false,
+			"isPublished": false,
+		}
+		findOptions := options.Find()
+		findOptions.SetSort(bson.M{"created_at": -1})
+		if !isAdmin {
+			filter["deviceId"] = deviceID
+		}
+		if err := mgm.Coll(&Comment{}).SimpleFind(&extraComments, filter, findOptions); err != nil {
+			return nil, err
+		}
+	}
+
 	filter := bson.M{}
 	filter["isDeleted"] = false
-	if !isAdmin {
-		filter["isPublished"] = true
-	}
+	filter["isPublished"] = true
 
 	var err error
 	var count int64
@@ -64,8 +80,9 @@ func (*Comment) Query(sortBy string, offset, limit int, isAdmin bool) (*commentQ
 	if err = mgm.Coll(&Comment{}).SimpleFind(&comments, filter, findOptions); err != nil {
 		return nil, err
 	}
+	comments = append(extraComments, comments...)
 	for _, comment := range comments {
-		comment.prepareStrID()
+		comment.prepareExtraFields(deviceID)
 	}
 
 	nextCursor := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(offset + len(comments))))
@@ -73,7 +90,7 @@ func (*Comment) Query(sortBy string, offset, limit int, isAdmin bool) (*commentQ
 	result := commentQueryResult{
 		Data: comments,
 		Paging: Paging{
-			Total:      count,
+			Total:      count + int64(len(extraComments)),
 			NextCursor: nextCursor,
 		},
 	}
@@ -115,12 +132,12 @@ func (*Comment) Create(nickname, title, desc, url, deviceID string) (*Comment, e
 	if err := mgm.Coll(&Comment{}).Create(&comment); err != nil {
 		return nil, err
 	}
-	comment.prepareStrID()
+	comment.prepareExtraFields(deviceID)
 
 	return &comment, nil
 }
 
-func (*Comment) Publish(id string) (*Success, error) {
+func (*Comment) Publish(id string, isPublish bool) (*Success, error) {
 	_id, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
@@ -130,7 +147,7 @@ func (*Comment) Publish(id string) (*Success, error) {
 	}
 	update := bson.M{
 		"$set": bson.M{
-			"isPublished": true,
+			"isPublished": isPublish,
 		},
 	}
 	_, err = mgm.Coll(&Comment{}).UpdateOne(mgm.Ctx(), filter, update)

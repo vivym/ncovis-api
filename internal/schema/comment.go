@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/graphql-go/graphql"
 	"github.com/vivym/ncovis-api/internal/model"
@@ -19,7 +20,7 @@ var commentType = graphql.NewObject(graphql.ObjectConfig{
 		"id": &graphql.Field{
 			Type: graphql.String,
 		},
-		"create_at": &graphql.Field{
+		"created_at": &graphql.Field{
 			Type: graphql.DateTime,
 		},
 		"updated_at": &graphql.Field{
@@ -41,6 +42,9 @@ var commentType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.Boolean,
 		},
 		"isTop": &graphql.Field{
+			Type: graphql.Boolean,
+		},
+		"isMine": &graphql.Field{
 			Type: graphql.Boolean,
 		},
 		"viewCount": &graphql.Field{
@@ -87,7 +91,7 @@ var commentQuery = graphql.Field{
 			DeviceID string
 		})
 
-		if sortBy == "" || (sortBy != "viewCount" && sortBy != "create_at") {
+		if sortBy == "" || (sortBy != "viewCount" && sortBy != "created_at") {
 			sortBy = "viewCount"
 		}
 		if limit == 0 || limit > 20 {
@@ -100,7 +104,7 @@ var commentQuery = graphql.Field{
 		}
 		offset, _ := strconv.Atoi(string(cursorByte))
 
-		return (&model.Comment{}).Query(sortBy, offset, limit, user.IsAdmin)
+		return (&model.Comment{}).Query(sortBy, offset, limit, user.IsAdmin, user.DeviceID)
 	},
 }
 
@@ -132,6 +136,31 @@ var createComment = graphql.Field{
 			DeviceID string
 		})
 
+		nickname = strings.TrimSpace(nickname)
+		title = strings.TrimSpace(title)
+		desc = strings.TrimSpace(desc)
+		url = strings.TrimSpace(url)
+
+		if len(nickname) == 0 || len(nickname) > 256 {
+			return nil, errors.New("invalid nickname")
+		}
+
+		if len(title) == 0 || len(title) > 256 {
+			return nil, errors.New("invalid title")
+		}
+
+		if len(desc) > 1024*1024 {
+			return nil, errors.New("invalid desc")
+		}
+
+		if len(url) > 1024 {
+			return nil, errors.New("invalid url")
+		}
+
+		if len(url) > 0 && !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+			return nil, errors.New("invalid url")
+		}
+
 		return (&model.Comment{}).Create(nickname, title, desc, url, user.DeviceID)
 	},
 }
@@ -144,19 +173,26 @@ var publishComment = graphql.Field{
 		"id": &graphql.ArgumentConfig{
 			Type: graphql.String,
 		},
+		"isPublish": &graphql.ArgumentConfig{
+			Type: graphql.Boolean,
+		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		id, _ := p.Args["id"].(string)
+		isPublish, _ := p.Args["isPublish"].(bool)
 		user, _ := p.Context.Value("user").(struct {
 			IsAdmin  bool
 			DeviceID string
 		})
 
 		if !user.IsAdmin {
-			return nil, errors.New("Permission Diend.")
+			comment, err := (&model.Comment{}).QueryWithID(id)
+			if err != nil || comment.DeviceID != user.DeviceID {
+				return nil, errors.New("Permission Diend.")
+			}
 		}
 
-		return (&model.Comment{}).Publish(id)
+		return (&model.Comment{}).Publish(id, isPublish)
 	},
 }
 
