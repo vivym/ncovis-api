@@ -73,7 +73,7 @@ spec:
           - name: APP_GRAPHIQLTOKEN
             value: __GRAPHIQL_TOKEN__
           - name: APP_ADMINTOKEN
-              value: __ADMIN_TOKEN__
+            value: __ADMIN_TOKEN__
           ports:
             - containerPort: 12711
               protocol: TCP
