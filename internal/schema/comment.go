@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/vivym/ncovis-api/internal/nlp"
+
 	"github.com/graphql-go/graphql"
 	"github.com/vivym/ncovis-api/internal/model"
 )
@@ -125,12 +127,21 @@ var createComment = graphql.Field{
 		"url": &graphql.ArgumentConfig{
 			Type: graphql.String,
 		},
+		"numWords": &graphql.ArgumentConfig{
+			Type: graphql.Int,
+		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		nickname, _ := p.Args["nickname"].(string)
 		title, _ := p.Args["title"].(string)
 		desc, _ := p.Args["desc"].(string)
 		url, _ := p.Args["url"].(string)
+		numWords, _ := p.Args["numWords"].(int)
+
+		if numWords <= 0 || numWords > 40 {
+			numWords = 40
+		}
+
 		user, _ := p.Context.Value("user").(struct {
 			IsAdmin  bool
 			DeviceID string
@@ -161,7 +172,9 @@ var createComment = graphql.Field{
 			return nil, errors.New("invalid url")
 		}
 
-		return (&model.Comment{}).Create(nickname, title, desc, url, user.DeviceID)
+		keywords, _ := nlp.Get().ExtractKeywords(title+"\n"+desc, int64(numWords))
+
+		return (&model.Comment{}).Create(nickname, title, desc, url, user.DeviceID, keywords)
 	},
 }
 

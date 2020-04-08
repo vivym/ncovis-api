@@ -116,7 +116,7 @@ func (*Comment) QueryWithID(id string) (*Comment, error) {
 	return comments[0], nil
 }
 
-func (*Comment) Create(nickname, title, desc, url, deviceID string) (*Comment, error) {
+func (*Comment) Create(nickname, title, desc, url, deviceID string, keywords []Keyword) (*Comment, error) {
 	comment := Comment{
 		Nickname:    nickname,
 		Title:       title,
@@ -127,6 +127,7 @@ func (*Comment) Create(nickname, title, desc, url, deviceID string) (*Comment, e
 		IsTop:       false,
 		IsDeleted:   false,
 		ViewCount:   0,
+		Keywords:    keywords,
 	}
 
 	if err := mgm.Coll(&Comment{}).Create(&comment); err != nil {

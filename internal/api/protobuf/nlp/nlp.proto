@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package nlp;
+
+message KeywordRequest {
+    enum MethodType {
+        TFIDF = 0;
+        TextRank = 1;
+    }
+
+    MethodType method = 1;
+
+    string sentence = 2;
+    int64 topK = 3;
+    repeated string allowPOS = 4;
+}
+
+message KeywordResponse {
+    message Keyword {
+        string word = 1;
+        double weight = 2;
+        string pos = 3;
+    }
+    repeated Keyword keywords = 1;
+}
+
+service NLP {
+    rpc ExtractKeywords(KeywordRequest) returns (KeywordResponse);
+
+    rpc ExtractKeywordsStream(stream KeywordRequest) returns (KeywordResponse);
+}
