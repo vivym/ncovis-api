@@ -7,6 +7,7 @@ import (
 
 type NCoVInfo struct {
 	mgm.DefaultModel   `bson:",inline"`
+	Country            string `json:"country" bson:"country"`
 	Region             string `json:"region" bson:"region"`
 	LocID              int    `json:"locID" bson:"locID"`
 	Date               string `json:"date" bson:"date"`
@@ -30,8 +31,11 @@ func (*NCoVInfo) CollectionName() string {
 	return "ncovinfos"
 }
 
-func (*NCoVInfo) Query(region, date string) ([]*NCoVInfo, error) {
+func (*NCoVInfo) Query(country, region, date string) ([]*NCoVInfo, error) {
 	filter := bson.M{}
+	if country != "" {
+		filter["country"] = country
+	}
 	if region != "" {
 		filter["region"] = region
 	}

@@ -40,6 +40,9 @@ var ncovType = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "nCoVRegion",
 	Description: "nCoV region info",
 	Fields: graphql.Fields{
+		"country": &graphql.Field{
+			Type: graphql.String,
+		},
 		"region": &graphql.Field{
 			Type: graphql.String,
 		},
@@ -75,6 +78,9 @@ var ncovQuery = graphql.Field{
 	Description: "nCoV Info Query",
 	Type:        graphql.NewList(ncovType),
 	Args: graphql.FieldConfigArgument{
+		"country": &graphql.ArgumentConfig{
+			Type: graphql.String,
+		},
 		"region": &graphql.ArgumentConfig{
 			Type: graphql.String,
 		},
@@ -83,8 +89,14 @@ var ncovQuery = graphql.Field{
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		country, _ := p.Args["country"].(string)
 		region, _ := p.Args["region"].(string)
 		date, _ := p.Args["date"].(string)
-		return (&model.NCoVInfo{}).Query(region, date)
+
+		if country == "" {
+			country = "中国"
+		}
+
+		return (&model.NCoVInfo{}).Query(country, region, date)
 	},
 }
