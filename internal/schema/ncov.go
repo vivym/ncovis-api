@@ -124,10 +124,6 @@ var ncovQuery = graphql.Field{
 		region, _ := p.Args["region"].(string)
 		date, _ := p.Args["date"].(string)
 
-		if country == "" {
-			country = "中国"
-		}
-
 		return (&model.NCoVInfo{}).Query(country, region, date)
 	},
 }
