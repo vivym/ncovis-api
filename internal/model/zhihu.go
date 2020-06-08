@@ -78,12 +78,12 @@ func (*ZhihuHotTopics) Query(time, from int32, limit int64, numWords int) (*zhih
 			count = numWords
 		}
 		topics.Keywords = topics.Keywords[:count]
-		for _, topic := range topics.Topics {
+		for i, topic := range topics.Topics {
 			count := len(topic.Keywords)
 			if count > numWords {
 				count = numWords
 			}
-			topic.Keywords = topic.Keywords[:count]
+			topics.Topics[i].Keywords = topic.Keywords[:count]
 		}
 	}
 
