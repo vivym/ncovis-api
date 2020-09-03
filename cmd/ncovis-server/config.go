@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/vivym/ncovis-api/internal/nlp"
-
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -19,8 +17,6 @@ type configuration struct {
 		DBName string
 		URI    string
 	}
-
-	NLP nlp.Config
 
 	GraphiQLToken string
 	AdminToken    string
@@ -46,8 +42,6 @@ func configure(v *viper.Viper, p *pflag.FlagSet) {
 
 	v.SetDefault("db.dbname", "ncovis")
 	v.SetDefault("db.uri", "mongodb://localhost:27017/")
-
-	v.SetDefault("nlp.address", "localhost:12377")
 
 	v.SetDefault("GraphiQLToken", "")
 	v.SetDefault("AdminToken", "")

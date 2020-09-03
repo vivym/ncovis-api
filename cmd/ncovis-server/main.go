@@ -6,8 +6,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/vivym/ncovis-api/internal/nlp"
-
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
@@ -70,10 +68,6 @@ func main() {
 
 	if err := db.SetupDB(config.DB.URI, config.DB.DBName); err != nil {
 		log.Fatalf("mongodb error: %s", err)
-	}
-
-	if err := nlp.Init(config.NLP); err != nil {
-		log.Fatalf("nlp error: %v\n", err)
 	}
 
 	r := route.New(config.GraphiQLToken, config.AdminToken)

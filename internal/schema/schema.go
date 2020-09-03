@@ -11,23 +11,9 @@ var rootQuery = graphql.NewObject(graphql.ObjectConfig{
 		"zhihu":       &zhihuQuery,
 		"weibo":       &weiboQuery,
 		"ncovOverall": &ncovOverallQuery,
-		"comment":     &commentQuery,
-	},
-})
-
-var rootMutation = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "RootMutation",
-	Description: "Root Mutation",
-	Fields: graphql.Fields{
-		"createComment":  &createComment,
-		"publishComment": &publishComment,
-		"topComment":     &topComment,
-		"viewComment":    &viewComment,
-		"deleteComment":  &deleteComment,
 	},
 })
 
 var Schema, _ = graphql.NewSchema(graphql.SchemaConfig{
-	Query:    rootQuery,
-	Mutation: rootMutation,
+	Query: rootQuery,
 })
